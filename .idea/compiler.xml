@@ -8,11 +8,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="heroes" />
         <module name="battleships" />
+        <module name="GopherTranslatorWorking" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="GopherTranslatorWorking" options="-parameters" />
       <module name="battleships" options="-parameters" />
       <module name="heroes" options="-parameters" />
     </option>

@@ -1,8 +1,0 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
-<a th:fragment="paging(pageNum, label, tooltip)" class="page-link"
-   th:href="@{'/hero/details?' + ${username!=null && username!=''? 'username=' + username + '&' : ''} + 'page=' + ${pageNum} + '&size=' + ${pageSize}}"
-   th:title="${tooltip}" rel="tooltip">
-    [[${label}]]
-</a>
