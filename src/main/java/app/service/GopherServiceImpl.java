@@ -202,7 +202,7 @@ public class GopherServiceImpl implements GopherService {
 //
 //        if(!findByWord(translator.getEnglishWord())) {
             gopherRepository.save(translator);
-//        /
+//        //
 
         return getHistory;
     }
