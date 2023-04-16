@@ -23,7 +23,5 @@ public interface GopherService {
     Map<String, String> saveWords(Translator translator);
 
 
-//     void addWordToDatabase(String englishWord, String gopherWord);
-
 
 }

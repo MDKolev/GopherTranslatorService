@@ -9,6 +9,5 @@ import java.util.Map;
 @Repository
 public interface GopherRepository extends JpaRepository<Translator, Long> {
 
-//    String findWord(String word);
 
 }

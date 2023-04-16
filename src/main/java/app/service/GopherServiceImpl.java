@@ -199,21 +199,10 @@ public class GopherServiceImpl implements GopherService {
     public Map<String, String> saveWords(Translator translator) {
         Map<String, String> getHistory = new TreeMap<>();
         getHistory.put(translator.getGopherWord(), translator.getGopherWord());
-//
-//        if(!findByWord(translator.getEnglishWord())) {
             gopherRepository.save(translator);
-//        //
 
         return getHistory;
     }
 
-//    public boolean findByWord(String word) {
-//        return !word.equals(gopherRepository.findWord(word));
-//    }
 
-//    public void addWordToDatabase(String englishWord, String gopherWord) {
-//        translator.setEnglishWord(englishWord);
-//        translator.setGopherWord(gopherWord);
-//        gopherRepository.save(translator);
-//    }
 }
