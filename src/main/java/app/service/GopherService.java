@@ -20,7 +20,7 @@ public interface GopherService {
 
     String returnJsonOfSentence(String englishSentence);
 
-    Map<String, String> saveWords(Translator translator);
+    Map<String, String> saveWord(Translator translator);
 
 
 

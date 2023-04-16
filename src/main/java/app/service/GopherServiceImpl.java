@@ -7,10 +7,7 @@ import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 @Service
 public class GopherServiceImpl implements GopherService {
@@ -79,7 +76,7 @@ public class GopherServiceImpl implements GopherService {
                         index = i + 1;
                         suffix = word.substring(index);
 
-                        if(isWordUppercase) {
+                        if (isWordUppercase) {
                             suffix = Character.toUpperCase(suffix.charAt(0)) + suffix.substring(1);
                         }
 
@@ -102,7 +99,7 @@ public class GopherServiceImpl implements GopherService {
                 }
                 suffix = word.substring(index);
 
-                if(isWordUppercase) {
+                if (isWordUppercase) {
                     suffix = Character.toUpperCase(suffix.charAt(0)) + suffix.substring(1);
                 }
                 translator.setGopherWord(suffix + prefix + "ogo");
@@ -112,30 +109,6 @@ public class GopherServiceImpl implements GopherService {
         }
 
         return translator.getGopherWord();
-    }
-
-    public String returnJsonOfWord(String englishWord) {
-
-        Translator translator = new Translator();
-        translator.setEnglishWord(englishWord);
-
-        String translatedWord = translateWord(englishWord);
-        translator.setGopherWord(translatedWord);
-
-        saveWords(translator);
-
-        return gson.toJson(translator);
-    }
-
-    public String returnJsonOfSentence(String englishSentence) {
-
-        Translator translator = new Translator();
-        translator.setEnglishSentence(englishSentence);
-
-        String translatedSentence = translateSentence(translator.getEnglishSentence());
-        translator.setGopherSentence(translatedSentence);
-
-        return gson.toJson(translator);
     }
 
     public String translateSentence(String englishSentence) {
@@ -154,6 +127,33 @@ public class GopherServiceImpl implements GopherService {
         }
         return stringBuilder.toString();
     }
+
+    public String returnJsonOfWord(String englishWord) {
+
+        Translator translator = new Translator();
+        translator.setEnglishWord(englishWord);
+
+        String translatedWord = translateWord(englishWord);
+        translator.setGopherWord(translatedWord);
+
+        saveWord(translator);
+
+        return gson.toJson(translator);
+    }
+
+    public String returnJsonOfSentence(String englishSentence) {
+
+        Translator translator = new Translator();
+        translator.setEnglishSentence(englishSentence);
+
+        String translatedSentence = translateSentence(translator.getEnglishSentence());
+        translator.setGopherSentence(translatedSentence);
+
+        saveSentence(translator);
+
+        return gson.toJson(translator);
+    }
+
 
     public boolean isVowel(char charToCheck) {
         char[] vowels = new char[]{'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'};
@@ -196,13 +196,31 @@ public class GopherServiceImpl implements GopherService {
         return stringBuilder.toString();
     }
 
-    public Map<String, String> saveWords(Translator translator) {
-        Map<String, String> getHistory = new TreeMap<>();
-        getHistory.put(translator.getGopherWord(), translator.getGopherWord());
-            gopherRepository.save(translator);
+    public Map<String, String> saveWord(Translator translator) {
+        String englishWord = translator.getGopherWord();
+        String gopherWord = translator.getGopherWord();
 
-        return getHistory;
+        Map<String, String> pairWords = new TreeMap<>();
+        pairWords.put(englishWord,gopherWord);
+
+        gopherRepository.save(translator);
+
+        return pairWords;
     }
+
+    public Map <String, String> saveSentence(Translator translator) {
+        String englishSentence = translator.getEnglishSentence();
+        String gopherSentence = translator.getGopherSentence();
+
+        Map<String, String> pairSentences = new HashMap<>();
+        pairSentences.put(englishSentence, gopherSentence);
+
+        gopherRepository.save(translator);
+
+        return pairSentences;
+
+    }
+
 
 
 }
