@@ -1,14 +1,16 @@
 package app.controller;
 
+import app.entity.Translator;
 import app.service.GopherService;
+import org.hibernate.engine.transaction.jta.platform.internal.TransactionManagerBasedSynchronizationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import javax.swing.table.TableRowSorter;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.Map;
 
 @RestController
 @ResponseBody
@@ -19,10 +21,19 @@ public class GopherController {
 
     @PostMapping("/word/{wordToTranslate}")
 //    @Produces(MediaType.APPLICATION_JSON)
-    public String translate(@PathVariable String wordToTranslate) {
+    public String translateWord(@PathVariable String wordToTranslate) {
+        return this.gopherService.returnJsonOfWord(wordToTranslate);
 
-        return this.gopherService.returnJson(wordToTranslate);
     }
 
+    @PostMapping("/sentence/{sentenceToTranslate}")
+    public String translateSentence(@PathVariable String sentenceToTranslate) {
+        return this.gopherService.returnJsonOfSentence(sentenceToTranslate);
+    }
+
+//    @GetMapping("/word")
+//    public ResponseEntity<String> getWord(@ResponseBody Translator translator) {
+//        return gopherService.getHistory(translator);
+//    }
 
 }
