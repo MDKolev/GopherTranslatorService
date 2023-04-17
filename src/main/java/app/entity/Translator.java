@@ -35,13 +35,6 @@ public class Translator implements Serializable {
     public Translator() {
     }
 
-    public Translator(String englishWord, String gopherWord, String englishSentence, String gopherSentence) {
-        this.englishWord = englishWord;
-        this.gopherWord = gopherWord;
-        this.englishSentence = englishSentence;
-        this.gopherSentence = gopherSentence;
-    }
-
     public String getEnglishWord() {
         return englishWord;
     }

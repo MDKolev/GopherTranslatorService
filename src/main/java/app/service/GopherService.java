@@ -1,7 +1,6 @@
 package app.service;
 
 import app.entity.Translator;
-import com.google.gson.Gson;
 
 import java.util.Map;
 
@@ -13,7 +12,6 @@ public interface GopherService {
 
     boolean isVowel(char charToCheck);
 
-    String firstLetterToUpperCase(String wordToCorrect);
     String firstLetterToUpperCase(String wordToCorrect, boolean isVowel);
 
     String returnJsonOfWord(String englishWord);

@@ -13,13 +13,13 @@ import java.util.*;
 public class GopherServiceImpl implements GopherService {
 
     private final Translator translator;
+    private final GopherRepository gopherRepository;
 
     private Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .excludeFieldsWithoutExposeAnnotation()
             .create();
 
-    private final GopherRepository gopherRepository;
 
     @Autowired
     public GopherServiceImpl(Translator translator, GopherRepository gopherRepository) {
@@ -29,11 +29,6 @@ public class GopherServiceImpl implements GopherService {
 
     public String translateWord(String word) {
         boolean checker = false;
-        boolean isWordUppercase = false;
-
-        if (isUpperCase(word)) {
-            isWordUppercase = true;
-        }
 
         translator.setEnglishWord(word);
 
@@ -43,7 +38,7 @@ public class GopherServiceImpl implements GopherService {
 
                 if (isUpperCase(word)) {
                     word = "g" + word;
-                    translator.setGopherWord(firstLetterToUpperCase(word, true));
+                    translator.setGopherWord(firstLetterToUpperCase(word,false));
                 } else {
                     translator.setGopherWord("g" + word);
                 }
@@ -54,7 +49,7 @@ public class GopherServiceImpl implements GopherService {
 
                 if (isUpperCase(word)) {
                     word = "ge" + word;
-                    translator.setGopherWord(firstLetterToUpperCase(word, true));
+                    translator.setGopherWord(firstLetterToUpperCase(word,false));
                 } else {
                     translator.setGopherWord("ge" + word);
                 }
@@ -76,7 +71,7 @@ public class GopherServiceImpl implements GopherService {
                         index = i + 1;
                         suffix = word.substring(index);
 
-                        if (isWordUppercase) {
+                        if (isUpperCase(word)) {
                             suffix = Character.toUpperCase(suffix.charAt(0)) + suffix.substring(1);
                         }
 
@@ -99,7 +94,7 @@ public class GopherServiceImpl implements GopherService {
                 }
                 suffix = word.substring(index);
 
-                if (isWordUppercase) {
+                if (isUpperCase(word)) {
                     suffix = Character.toUpperCase(suffix.charAt(0)) + suffix.substring(1);
                 }
                 translator.setGopherWord(suffix + prefix + "ogo");
@@ -119,7 +114,7 @@ public class GopherServiceImpl implements GopherService {
             String converted = "";
 
             if (isUpperCase(string)) {
-                converted = firstLetterToUpperCase(string);
+                converted = firstLetterToUpperCase(string,true);
                 stringBuilder.append(converted);
             } else {
                 stringBuilder.append(translateWord(string)).append(" ");
@@ -170,23 +165,16 @@ public class GopherServiceImpl implements GopherService {
         return Character.isUpperCase(word.charAt(0));
     }
 
-    public String firstLetterToUpperCase(String wordToCorrect) {
+
+    public String firstLetterToUpperCase(String wordToCorrect, boolean isSentence) {
         StringBuilder stringBuilder = new StringBuilder();
+        String word = "";
 
-        String word = translateWord(wordToCorrect).toLowerCase();
-
-        stringBuilder
-                .append(word.substring(0, 1).toUpperCase())
-                .append(word.substring(1).toLowerCase())
-                .append(" ");
-
-        return stringBuilder.toString();
-    }
-
-    public String firstLetterToUpperCase(String wordToCorrect, boolean isVowel) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        String word = wordToCorrect.toLowerCase();
+        if (isSentence) {
+            word = translateWord(wordToCorrect).toLowerCase();
+        } else {
+            word = wordToCorrect.toLowerCase();
+        }
 
         stringBuilder
                 .append(word.substring(0, 1).toUpperCase())
@@ -220,7 +208,4 @@ public class GopherServiceImpl implements GopherService {
         return pairSentences;
 
     }
-
-
-
 }
