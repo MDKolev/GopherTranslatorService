@@ -1,7 +1,9 @@
 package app.service;
 
-import app.entity.Translator;
-import app.repository.GopherRepository;
+import app.entity.Sentence;
+import app.entity.Word;
+import app.repository.SentenceRepository;
+import app.repository.WordRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,37 +12,36 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class GopherServiceImpl implements GopherService {
+public class TranslatorServiceImpl implements TranslatorService {
 
-    private final Translator translator;
-    private final GopherRepository gopherRepository;
+    private final WordRepository wordRepository;
+    private final SentenceRepository sentenceRepository;
 
     private Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .excludeFieldsWithoutExposeAnnotation()
             .create();
 
-
     @Autowired
-    public GopherServiceImpl(Translator translator, GopherRepository gopherRepository) {
-        this.translator = translator;
-        this.gopherRepository = gopherRepository;
+    public TranslatorServiceImpl(WordRepository wordRepository, SentenceRepository sentenceRepository) {
+        this.wordRepository = wordRepository;
+        this.sentenceRepository = sentenceRepository;
     }
 
     public String translateWord(String word) {
         boolean checker = false;
 
-        translator.setEnglishWord(word);
 
-        for (int i = 0; i < word.length(); i++) {
-            if (isVowel(word.charAt(i))) {
+        String translatedWord = null;
+
+            if (isVowel(word.charAt(0))) {
                 checker = true;
 
                 if (isUpperCase(word)) {
                     word = "g" + word;
-                    translator.setGopherWord(firstLetterToUpperCase(word,false));
+                    translatedWord = firstLetterToUpperCase(word, false);
                 } else {
-                    translator.setGopherWord("g" + word);
+                    translatedWord = "g" + word;
                 }
 
             } else if (word.charAt(0) == 'x' || word.charAt(0) == 'X'
@@ -49,13 +50,11 @@ public class GopherServiceImpl implements GopherService {
 
                 if (isUpperCase(word)) {
                     word = "ge" + word;
-                    translator.setGopherWord(firstLetterToUpperCase(word,false));
+                    translatedWord = firstLetterToUpperCase(word, false);
                 } else {
-                    translator.setGopherWord("ge" + word);
+                    translatedWord = "ge" + word;
                 }
             }
-            break;
-        }
 
         if (!checker) {
             int index = 1;
@@ -75,13 +74,12 @@ public class GopherServiceImpl implements GopherService {
                             suffix = Character.toUpperCase(suffix.charAt(0)) + suffix.substring(1);
                         }
 
-                        translator.setGopherWord(suffix + prefix + "ogo");
+                        translatedWord = suffix + prefix + "ogo";
                         break;
                     }
                 }
             }
 
-            //check for point 3
             if (index == 1) {
                 for (int i = 0; i < word.length(); i++) {
                     if (isVowel(word.charAt(i))) {
@@ -97,27 +95,27 @@ public class GopherServiceImpl implements GopherService {
                 if (isUpperCase(word)) {
                     suffix = Character.toUpperCase(suffix.charAt(0)) + suffix.substring(1);
                 }
-                translator.setGopherWord(suffix + prefix + "ogo");
+                translatedWord = suffix + prefix +"ogo";
 
-                return translator.getGopherWord();
+                return translatedWord;
             }
         }
 
-        return translator.getGopherWord();
+        return translatedWord;
     }
 
     public String translateSentence(String englishSentence) {
         List<String> rawSentence = Arrays.stream(englishSentence.split("\\s+")).toList();
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (String string : rawSentence) {
+        for (String word : rawSentence) {
             String converted = "";
 
-            if (isUpperCase(string)) {
-                converted = firstLetterToUpperCase(string,true);
+            if (isUpperCase(word)) {
+                converted = firstLetterToUpperCase(word,true);
                 stringBuilder.append(converted);
             } else {
-                stringBuilder.append(translateWord(string)).append(" ");
+                stringBuilder.append(translateWord(word)).append(" ");
             }
         }
         return stringBuilder.toString();
@@ -125,28 +123,28 @@ public class GopherServiceImpl implements GopherService {
 
     public String returnJsonOfWord(String englishWord) {
 
-        Translator translator = new Translator();
-        translator.setEnglishWord(englishWord);
+        Word word = new Word();
+        word.setEnglishWord(englishWord);
 
         String translatedWord = translateWord(englishWord);
-        translator.setGopherWord(translatedWord);
+        word.setGopherWord(translatedWord);
 
-        saveWord(translator);
+        wordRepository.save(word);
 
-        return gson.toJson(translator);
+        return gson.toJson(word);
     }
 
     public String returnJsonOfSentence(String englishSentence) {
 
-        Translator translator = new Translator();
-        translator.setEnglishSentence(englishSentence);
+        Sentence sentence = new Sentence();
+        sentence.setEnglishSentence(englishSentence);
 
-        String translatedSentence = translateSentence(translator.getEnglishSentence());
-        translator.setGopherSentence(translatedSentence);
+        String translatedSentence = translateSentence(sentence.getEnglishSentence());
+        sentence.setGopherSentence(translatedSentence);
 
-        saveSentence(translator);
+        sentenceRepository.save(sentence);
 
-        return gson.toJson(translator);
+        return gson.toJson(sentence);
     }
 
 
@@ -166,6 +164,7 @@ public class GopherServiceImpl implements GopherService {
     }
 
 
+    // firstLetterToUpperCaseIfWordOrElseTranslatedSentence
     public String firstLetterToUpperCase(String wordToCorrect, boolean isSentence) {
         StringBuilder stringBuilder = new StringBuilder();
         String word = "";
@@ -184,28 +183,28 @@ public class GopherServiceImpl implements GopherService {
         return stringBuilder.toString();
     }
 
-    public Map<String, String> saveWord(Translator translator) {
-        String englishWord = translator.getGopherWord();
-        String gopherWord = translator.getGopherWord();
+//    public Map<String, String> saveWord(Translator translator) {
+//        String englishWord = translator.getGopherWord();
+//        String gopherWord = translator.getGopherWord();
+//
+//        Map<String, String> pairWords = new TreeMap<>();
+//        pairWords.put(englishWord,gopherWord);
+//
+//        gopherRepository.save(translator);
+//
+//        return pairWords;
+//    }
 
-        Map<String, String> pairWords = new TreeMap<>();
-        pairWords.put(englishWord,gopherWord);
-
-        gopherRepository.save(translator);
-
-        return pairWords;
-    }
-
-    public Map <String, String> saveSentence(Translator translator) {
-        String englishSentence = translator.getEnglishSentence();
-        String gopherSentence = translator.getGopherSentence();
-
-        Map<String, String> pairSentences = new HashMap<>();
-        pairSentences.put(englishSentence, gopherSentence);
-
-        gopherRepository.save(translator);
-
-        return pairSentences;
-
-    }
+//    public Map <String, String> saveSentence(Translator translator) {
+//        String englishSentence = translator.getEnglishSentence();
+//        String gopherSentence = translator.getGopherSentence();
+//
+//        Map<String, String> pairSentences = new HashMap<>();
+//        pairSentences.put(englishSentence, gopherSentence);
+//
+//        gopherRepository.save(translator);
+//
+//        return pairSentences;
+//
+//    }
 }

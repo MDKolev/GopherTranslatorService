@@ -1,16 +1,21 @@
 package app.controller;
 
-import app.service.GopherService;
+import app.service.TranslatorService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.util.*;
 
 @RestController
-@ResponseBody
+//@ResponseBody
 public class GopherController {
 
+    // should segregate responsibilities in the Controller -> Service -> Repository pattern
+    // findWordsQuery / selectWordsQuery
     private final String QUERY_FOR_WORDS = "SELECT english_word, gopher_word " +
                                            "FROM translator " +
                                            "WHERE english_word IS NOT NULL " +
@@ -22,20 +27,27 @@ public class GopherController {
                                                "WHERE english_sentence IS NOT NULL " +
                                                "ORDER BY english_sentence ASC";
     @Autowired
-    private GopherService gopherService;
+    private TranslatorService translatorService;
+
+    @Autowired
+    private Gson gson;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    // Must return JSON! Also applies to everything else
     @PostMapping("/word/{wordToTranslate}")
-//    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public String translateWord(@PathVariable String wordToTranslate) {
-        return gopherService.returnJsonOfWord(wordToTranslate);
+//        String word = gopherService.translateWord();
+        // Marshal word to JSON
+        // Return the result
+        return translatorService.returnJsonOfWord(wordToTranslate);
     }
 
     @PostMapping("/sentence/{sentenceToTranslate}")
     public String translateSentence(@PathVariable String sentenceToTranslate) {
-        return gopherService.returnJsonOfSentence(sentenceToTranslate);
+        return translatorService.returnJsonOfSentence(sentenceToTranslate);
     }
 
     @GetMapping("/history/words")
