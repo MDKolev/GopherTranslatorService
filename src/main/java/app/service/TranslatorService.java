@@ -1,22 +1,19 @@
 package app.service;
 
 
+import java.util.List;
+import java.util.Map;
+
 public interface TranslatorService { // nitpick for the name: TranslatorService
 
     String translateWord(String word);
 
     String translateSentence(String word);
 
-//    boolean isVowel(char charToCheck);
-//
+    Map<String, List<Map<String,String>>> getHistory();
+
 //    String firstLetterToUpperCase(String wordToCorrect, boolean isVowel);
-//
-    String returnJsonOfWord(String englishWord);
-//
-    String returnJsonOfSentence(String englishSentence);
-//
-//    Map<String, String> saveWord(Translator translator);
 
-
+//    Map<String, String> saveWord(String word);
 
 }
