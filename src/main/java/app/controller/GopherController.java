@@ -1,11 +1,13 @@
 package app.controller;
 
+import app.entity.Word;
 import app.service.TranslatorService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.*;
@@ -36,18 +38,37 @@ public class GopherController {
     JdbcTemplate jdbcTemplate;
 
     // Must return JSON! Also applies to everything else
-    @PostMapping("/word/{wordToTranslate}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String translateWord(@PathVariable String wordToTranslate) {
+    @RequestMapping(path = "/word",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public Map<String, String> translateWord(@RequestBody Map<String,String> request) {
 //        String word = gopherService.translateWord();
         // Marshal word to JSON
         // Return the result
-        return translatorService.returnJsonOfWord(wordToTranslate);
+        String englishWord = request.get("english-word");
+        String gopherWord = translatorService.translateWord(englishWord);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("gopher-word", gopherWord);
+
+        return response;
     }
 
-    @PostMapping("/sentence/{sentenceToTranslate}")
-    public String translateSentence(@PathVariable String sentenceToTranslate) {
-        return translatorService.returnJsonOfSentence(sentenceToTranslate);
+    @RequestMapping(path = "/sentence",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public Map<String, String> translateSentence(@RequestBody Map<String, String> request) {
+        String englishSentence = request.get("english-sentence");
+        String gopherSentence = translatorService.translateSentence(englishSentence);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("gopher-sentence", gopherSentence);
+
+        return response;
     }
 
     @GetMapping("/history/words")
