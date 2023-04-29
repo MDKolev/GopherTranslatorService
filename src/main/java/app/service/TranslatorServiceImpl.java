@@ -28,6 +28,8 @@ public class TranslatorServiceImpl implements TranslatorService {
         if (isVowel(englishWord.charAt(0))) {
             checker = true;
 
+            //checks if a word starts with a vowel letter
+            //adds prefix “g” to the word (ex. apple => gapple)
             if (isUpperCase(englishWord)) {
                 englishWord = "g" + englishWord;
                 translatedWord = firstLetterToUpperCase(englishWord, false);
@@ -35,6 +37,8 @@ public class TranslatorServiceImpl implements TranslatorService {
                 translatedWord = "g" + englishWord;
             }
 
+            //checks if a word starts with the consonant letters “xr”
+            //adds the prefix “ge” to the begging of the word (ex. xray => gexray)
         } else if (englishWord.charAt(0) == 'x' || englishWord.charAt(0) == 'X'
                 && englishWord.charAt(1) == 'r' || englishWord.charAt(1) == 'R') {
             checker = true;
@@ -53,7 +57,8 @@ public class TranslatorServiceImpl implements TranslatorService {
             String prefix = "";
             String suffix = "";
 
-            //checks for point 4
+            //checks if a word starts with a consonant sound followed by "qu"
+            //moves it to the end of the word and then adds "ogo" suffix to the word (e.g. "square" -> "aresquogo")
             for (int i = 0; i < englishWord.length(); i++) {
                 if (isVowel(englishWord.charAt(i))) {
                     if (englishWord.charAt(i) == 'u' && englishWord.charAt(i - 1) == 'q') {
@@ -73,6 +78,8 @@ public class TranslatorServiceImpl implements TranslatorService {
             }
 
             if (index == 1) {
+                //checks if a word starts with a consonant sound
+                //moves it to the end of the word and then adds “ogo” suffix to the word (e.g. "chair" -> "airchogo”)
                 for (int i = 0; i < englishWord.length(); i++) {
                     if (isVowel(englishWord.charAt(i))) {
                         prefix = englishWord.substring(0, i).toLowerCase();
@@ -122,13 +129,16 @@ public class TranslatorServiceImpl implements TranslatorService {
     @Override
     public Map<String, List<Map<String, String>>> getHistory() {
         List<Map<String, String>> historyList = new ArrayList<>();
+
         for (Map.Entry<String, String> entry : values.entrySet()) {
             Map<String, String> wordMap = new TreeMap<>();
             wordMap.put(entry.getKey(), entry.getValue());
             historyList.add(wordMap);
         }
+
         Map<String, List<Map<String, String>>> result = new TreeMap<>();
         historyList.sort(Comparator.comparing(m -> m.keySet().iterator().next()));
+
         result.put("history", historyList);
         return result;
 
@@ -152,6 +162,7 @@ public class TranslatorServiceImpl implements TranslatorService {
 
 
     // firstLetterToUpperCaseIfWordOrElseTranslatedSentence
+    // TODO: separate method
     public String firstLetterToUpperCase(String wordToCorrect, boolean isSentence) {
         StringBuilder stringBuilder = new StringBuilder();
         String word = "";
