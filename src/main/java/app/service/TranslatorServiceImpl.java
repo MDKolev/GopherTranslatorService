@@ -110,19 +110,22 @@ public class TranslatorServiceImpl implements TranslatorService {
         List<String> rawSentence = Arrays.stream(englishSentence.split("\\s+")).toList();
         StringBuilder stringBuilder = new StringBuilder();
 
+
         for (String word : rawSentence) {
             String converted = "";
 
             if (isUpperCase(word)) {
-                converted = firstLetterToUpperCase(word, true);
+                converted = firstLetterToUpperCase(word);
                 stringBuilder.append(converted);
             } else {
                 stringBuilder.append(translateWord(word)).append(" ");
             }
         }
 
-        values.put(englishSentence, stringBuilder.toString());
+        int lastIndexOfSpace = stringBuilder.lastIndexOf(" ");
+        stringBuilder.deleteCharAt(lastIndexOfSpace);
 
+        values.put(englishSentence, stringBuilder.toString());
         return stringBuilder.toString();
     }
 
@@ -159,24 +162,28 @@ public class TranslatorServiceImpl implements TranslatorService {
     public boolean isUpperCase(String word) {
         return Character.isUpperCase(word.charAt(0));
     }
-
-
-    // firstLetterToUpperCaseIfWordOrElseTranslatedSentence
-    // TODO: separate method
-    public String firstLetterToUpperCase(String wordToCorrect, boolean isSentence) {
+    
+    public String firstLetterToUpperCase(String wordToCorrect) {
         StringBuilder stringBuilder = new StringBuilder();
-        String word = "";
 
-        if (isSentence) {
-            word = translateWord(wordToCorrect).toLowerCase();
-        } else {
-            word = wordToCorrect.toLowerCase();
-        }
+        String word = translateWord(wordToCorrect).toLowerCase();
 
         stringBuilder
                 .append(word.substring(0, 1).toUpperCase())
                 .append(word.substring(1).toLowerCase())
                 .append(" ");
+
+        return stringBuilder.toString();
+    }
+
+    public String firstLetterToUpperCase(String wordToCorrect, boolean isVowel) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        String word = wordToCorrect.toLowerCase();
+
+        stringBuilder
+                .append(word.substring(0, 1).toUpperCase())
+                .append(word.substring(1).toLowerCase());
 
         return stringBuilder.toString();
     }
