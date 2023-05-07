@@ -32,7 +32,7 @@ public class TranslatorServiceImpl implements TranslatorService {
             //adds prefix “g” to the word (ex. apple => gapple)
             if (isUpperCase(englishWord)) {
                 englishWord = "g" + englishWord;
-                translatedWord = firstLetterToUpperCase(englishWord, false);
+                translatedWord = firstLetterToUpperCase(englishWord, true);
             } else {
                 translatedWord = "g" + englishWord;
             }
@@ -45,7 +45,7 @@ public class TranslatorServiceImpl implements TranslatorService {
 
             if (isUpperCase(englishWord)) {
                 englishWord = "ge" + englishWord;
-                translatedWord = firstLetterToUpperCase(englishWord, false);
+                translatedWord = firstLetterToUpperCase(englishWord, true);
             } else {
                 translatedWord = "ge" + englishWord;
             }
@@ -162,7 +162,7 @@ public class TranslatorServiceImpl implements TranslatorService {
     public boolean isUpperCase(String word) {
         return Character.isUpperCase(word.charAt(0));
     }
-    
+
     public String firstLetterToUpperCase(String wordToCorrect) {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -176,7 +176,7 @@ public class TranslatorServiceImpl implements TranslatorService {
         return stringBuilder.toString();
     }
 
-    public String firstLetterToUpperCase(String wordToCorrect, boolean isVowel) {
+    public String firstLetterToUpperCase(String wordToCorrect, boolean isVowelOrXr) {
         StringBuilder stringBuilder = new StringBuilder();
 
         String word = wordToCorrect.toLowerCase();
